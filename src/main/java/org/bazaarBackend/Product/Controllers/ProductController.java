@@ -23,6 +23,7 @@ public class ProductController {
 
     @GetMapping
     public @ResponseBody List<Product> getAllProducts() {
+
         return productService.getAllProducts();
     }
 }
