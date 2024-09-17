@@ -27,7 +27,12 @@ public class ProductService {
         return P;
     }
 
-    public List<Product> getAllProducts() {
-        return productRepo.getAllProducts();
+    public List<Product> getAllProducts(String category) {
+        if (category != null && category.isEmpty()) {
+            return productRepo.getAllProducts();
+        } else {
+            return productRepo.getCategoryProducts(category);
+        }
     }
+
 }

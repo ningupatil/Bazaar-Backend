@@ -1,6 +1,8 @@
 package org.bazaarBackend.User.Repository;
 
 import jakarta.persistence.Query;
+import org.bazaarBackend.Response.Response;
+import org.bazaarBackend.User.Dtos.UserDto;
 import org.bazaarBackend.User.Models.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,10 +18,10 @@ import java.util.Optional;
 @Repository
 public class UserRepository {
 
-    public User createUser(User user) {
+    public UserDto createUser(UserDto user) {
         User U = new User();
         U.setAge(user.getAge());
-        U.setEmailId(user.getEmailId());
+        U.setEmailId(user.getEmail());
         U.setPassword(user.getPassword());
         U.setName(user.getName());
         System.out.println("---- age --- " + U.getAge());
@@ -34,10 +36,12 @@ public class UserRepository {
         session.persist(U);
 
         tx.commit();
-        return U;
+
+        UserDto userDto = new UserDto(U);
+        return userDto;
     }
 
-    public User getUser(User userDetails) {
+    public UserDto getUser(UserDto userDetails) {
         Transaction tx = null;
         Configuration config = new Configuration().addAnnotatedClass(User.class)
                 .configure("Hibernate.cfg.xml");
@@ -46,19 +50,24 @@ public class UserRepository {
                 .build();
         SessionFactory sf = config.buildSessionFactory(reg);
         User result = null;
+        UserDto userDto = null;
         try {
             Session session = sf.openSession();
              tx = session.beginTransaction();
 
-            String hql = "from User where emailId = :emailId and password = :password";
+            String hql = "from User where id = :userId and emailId = :emailId " ;
+//                    " and password = :password";
             Query query = session.createQuery(hql, User.class);
 
-            query.setParameter("emailId", userDetails.getEmailId());
-            query.setParameter("password", userDetails.getPassword());
-            result = (User)query.getSingleResult();
+            query.setParameter("emailId", userDetails.getEmail());
+//            query.setParameter("password", userDetails.getPassword());
+            query.setParameter("userId", userDetails.getId());
+            result = (User) query.getSingleResult();
 
             // commit transaction
             tx.commit();
+            userDto = new UserDto(result);
+
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
@@ -68,8 +77,8 @@ public class UserRepository {
 //        finally {
 //            session.close();
 //        }
-
-        return result;
+//        Response response = new Response(userDto);
+        return userDto;
 
 
     }

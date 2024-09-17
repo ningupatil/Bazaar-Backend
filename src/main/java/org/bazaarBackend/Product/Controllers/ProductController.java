@@ -22,8 +22,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public @ResponseBody List<Product> getAllProducts() {
+    public @ResponseBody List<Product> getAllProducts(@RequestParam("category") String Category) {
 
-        return productService.getAllProducts();
+        return productService.getAllProducts(Category);
     }
 }

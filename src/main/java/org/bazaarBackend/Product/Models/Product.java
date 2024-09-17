@@ -28,13 +28,15 @@ public class Product {
     @Column(name = "description")
     private String description;
 
-    @OneToOne(targetEntity = Brand.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @OneToOne(targetEntity = Brand.class, cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
     private Brand brand;
 
     @Transient
     private Integer brandId;
 
+    @JsonManagedReference
     @OneToOne(targetEntity = Category.class, cascade = CascadeType.MERGE)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
