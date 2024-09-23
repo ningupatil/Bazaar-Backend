@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
@@ -22,8 +23,18 @@ public class ProductController {
     }
 
     @GetMapping
-    public @ResponseBody List<Product> getAllProducts(@RequestParam("category") String Category) {
+    public @ResponseBody List<Product> getAllProducts(@RequestParam("category") Optional<String> category) {
+        if(category.isPresent()) {
+            return productService.getAllProducts(category.get());
+        } else {
+            return productService.getAllProducts(null);
+        }
 
-        return productService.getAllProducts(Category);
+    }
+
+    @GetMapping("products/{productId}")
+    public @ResponseBody Product findById(@PathVariable("productId") Long id) {
+        Product p = productService.findById(id);
+        return p;
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ProductRepository {
@@ -153,4 +154,37 @@ public class ProductRepository {
         }
         return productList;
    }
+
+   public Product findById(Long id) {
+       Configuration config = new Configuration().addAnnotatedClass(ProductImages.class)
+               .addAnnotatedClass(Product.class)
+               .addAnnotatedClass(Category.class)
+               .addAnnotatedClass(Brand.class)
+               .configure("Hibernate.cfg.xml");
+       ServiceRegistry reg = new StandardServiceRegistryBuilder()
+               .applySettings(config.getProperties())
+               .build();
+       SessionFactory sf = config.buildSessionFactory(reg);
+       Transaction tx = null;
+       Product result = null;
+
+       try {
+           Session session = sf.openSession();
+           tx = session.beginTransaction();
+
+           String hql = "from Product id = :productId";
+           Query<Product> query = session.createQuery(hql,Product.class);
+           query.setParameter("productId", id);
+           result = query.getSingleResult();
+
+           tx.commit();
+       } catch (Exception e) {
+           if (tx != null) {
+               tx.rollback();
+           }
+           e.printStackTrace();
+       }
+      return result;
+   }
+
 }

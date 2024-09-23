@@ -1,5 +1,7 @@
 package org.bazaarBackend.Product.Dtos;
 
+import org.bazaarBackend.Product.Models.Product;
+
 import java.util.List;
 
 public class ProductDto {
@@ -17,6 +19,15 @@ public class ProductDto {
     private String brand;
 
     private String category;
+
+    public ProductDto(Product product) {
+        id = product.getId();
+        title = product.getTitle();
+        price = product.getPrice();
+        description = product.getDescription();
+
+
+    }
 
     public int getId() {
         return id;
